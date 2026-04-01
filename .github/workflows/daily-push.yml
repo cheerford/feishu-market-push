@@ -1,0 +1,37 @@
+name: Daily Market Report
+
+on:
+  schedule:
+    # UTC 时间：1:00 = 北京时间 9:00, 10:00 = 北京时间 18:00
+    - cron: '0 1 * * 1-5'   # 早报（周一到周五北京时间9:00）
+    - cron: '0 10 * * 1-5'  # 复盘（周一到周五北京时间18:00）
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  morning-report:
+    if: github.event.schedule == '0 1 * * 1-5' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - run: python send_report.py morning
+        env:
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
+
+  evening-report:
+    if: github.event.schedule == '0 10 * * 1-5'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - run: python send_report.py evening
+        env:
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
