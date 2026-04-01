@@ -25,7 +25,7 @@ jobs:
           ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
 
   evening-report:
-    if: github.event.schedule == '0 10 * * 1-5'
+    if: github.event.schedule == '0 10 * * 1-5' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
