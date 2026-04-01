@@ -4,6 +4,7 @@
 """
 import os
 import sys
+import json
 import requests
 from datetime import datetime
 
@@ -45,7 +46,7 @@ def send_message(token, message):
     data = {
         "receive_id": USER_ID,
         "msg_type": "text",
-        "content": f'{"text": "{message}"}'
+        "content": json.dumps({"text": message})
     }
 
     try:
